@@ -1,11 +1,11 @@
-use axum::{
-    Router,
-    routing::get,
-    response::{Headers, IntoResponse},
-};
-
 pub mod handlers {
-    async fn init_http() {
+    use axum::{
+        Router,
+        routing::get,
+        response::IntoResponse
+    };
+
+    pub async fn init_http() {
         let app = Router::new().route("/volumes", get(list_volumes));
     }
 
