@@ -1,0 +1,2 @@
+struct LvmGateway {}
+impl LvmGateway {}
