@@ -118,7 +118,7 @@ func volumeAPIServer(port int) error {
 				"lvcreate",
 				"-s",
 				"-n", snapshotName,
-				"-L", "64T",
+				"-l", "%ORIGIN",
 				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
 			).Output()
 			if err != nil {
