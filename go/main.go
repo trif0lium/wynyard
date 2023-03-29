@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/jaevor/go-nanoid"
 	"github.com/labstack/echo/v4"
@@ -109,10 +110,57 @@ func volumeAPIServer(port int) error {
 		volumeName := strings.ToLower(c.Param("volume"))
 		snapshotName := strings.ToLower(c.Param("snapshot"))
 
-		if snapshotName == "latest" {
-		}
+		var tarballFilePath string
 
-		tarballFilePath := filepath.Join(TARBALL_FILE_PATH, snapshotName+".tar.zst")
+		if snapshotName == "latest" {
+			snapshotName = volumeName + "_" + fmt.Sprintf("%d", time.Now().Unix())
+			out, err := exec.Command(
+				"lvcreate",
+				"-s",
+				"-n", snapshotName,
+				"-L", "64T",
+				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
+			).Output()
+			if err != nil {
+				return err
+			}
+			log.Println(strings.TrimSpace(string(out)))
+
+			mountPath := filepath.Join(MOUNT_PATH, snapshotName)
+
+			if err := os.MkdirAll(mountPath, 0777); err != nil {
+				return err
+			}
+			defer os.RemoveAll(mountPath)
+
+			out, err = exec.Command(
+				"mount",
+				"/dev/mapper/"+snapshotName,
+				mountPath,
+			).Output()
+			if err != nil {
+				return err
+			}
+			log.Println(strings.TrimSpace(string(out)))
+
+			tarballFilePath = filepath.Join(TARBALL_FILE_PATH, snapshotName+".tar.zst")
+			if err := os.RemoveAll(tarballFilePath); err != nil {
+				return err
+			}
+			out, err = exec.Command(
+				"tar",
+				"-I", "'zstd --fast=5'",
+				"-cvf", tarballFilePath,
+				"-C", mountPath,
+				".",
+			).Output()
+			if err != nil {
+				return err
+			}
+			log.Println(strings.TrimSpace(string(out)))
+		} else {
+			tarballFilePath = filepath.Join(TARBALL_FILE_PATH, snapshotName+".tar.zst")
+		}
 
 		if _, err := os.Stat(tarballFilePath); err != nil {
 			return err
