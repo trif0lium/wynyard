@@ -117,6 +117,9 @@ func volumeCreate(volumeName string, virtualSizeMB int) error {
 		"--name", volumeName,
 		"--virtualsize", fmt.Sprintf("%dM", virtualSizeMB),
 	).Output()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
