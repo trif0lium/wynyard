@@ -28,25 +28,25 @@ func main() {
 					{
 						Name: "mount",
 						Action: func(cCtx *cli.Context) error {
-							return nil
+							return volumeMount()
 						},
 					},
 					{
 						Name: "tree",
 						Action: func(cCtx *cli.Context) error {
-							return nil
+							return volumeTree()
 						},
 					},
 					{
 						Name: "list",
 						Action: func(cCtx *cli.Context) error {
-							return nil
+							return volumeList()
 						},
 					},
 					{
 						Name: "describe",
 						Action: func(cCtx *cli.Context) error {
-							return nil
+							return volumeDescribe()
 						},
 					},
 					{
@@ -60,13 +60,13 @@ func main() {
 							},
 						},
 						Action: func(cCtx *cli.Context) error {
-							return nil
+							return volumeCreate()
 						},
 					},
 					{
 						Name: "delete",
 						Action: func(cCtx *cli.Context) error {
-							return nil
+							return volumeDelete()
 						},
 					},
 				},
@@ -77,4 +77,28 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func volumeMount() error {
+	return nil
+}
+
+func volumeTree() error {
+	return nil
+}
+
+func volumeList() error {
+	return nil
+}
+
+func volumeDescribe() error {
+	return nil
+}
+
+func volumeCreate() error {
+	return nil
+}
+
+func volumeDelete() error {
+	return nil
 }
