@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/jaevor/go-nanoid"
@@ -105,6 +106,19 @@ func volumeAPIServer(port int) error {
 	e := echo.New()
 
 	e.GET("/volumes/:volume/snapshots/:snapshot", func(c echo.Context) error {
+		volumeName := strings.ToLower(c.Param("volume"))
+		snapshotName := strings.ToLower(c.Param("snapshot"))
+
+		if snapshotName == "latest" {
+		}
+
+		tarballFilePath := filepath.Join(TARBALL_FILE_PATH, snapshotName+".tar.zst")
+
+		if _, err := os.Stat(tarballFilePath); err != nil {
+			return err
+		}
+
+		return c.File(tarballFilePath)
 	})
 
 	if err := e.Start(fmt.Sprintf(":%d", port)); err != nil {
