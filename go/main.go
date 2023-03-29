@@ -16,6 +16,11 @@ func main() {
 				Subcommands: []*cli.Command{
 					{
 						Name: "api-server",
+						Flags: []cli.Flag{
+							&cli.IntFlag{
+								Name: "port",
+							},
+						},
 						Action: func(cCtx *cli.Context) error {
 							return nil
 						},
@@ -46,6 +51,14 @@ func main() {
 					},
 					{
 						Name: "create",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name: "remote-snapshot",
+							},
+							&cli.IntFlag{
+								Name: "size",
+							},
+						},
 						Action: func(cCtx *cli.Context) error {
 							return nil
 						},
