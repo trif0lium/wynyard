@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/jaevor/go-nanoid"
 	"github.com/urfave/cli/v2"
@@ -63,7 +64,9 @@ func main() {
 							},
 						},
 						Action: func(cCtx *cli.Context) error {
-							return volumeCreate()
+							volumeName := cCtx.Args().First()
+							virtualSizeMB := cCtx.Int("size")
+							return volumeCreate(volumeName, virtualSizeMB)
 						},
 					},
 					{
@@ -120,6 +123,15 @@ func volumeCreate(volumeName string, virtualSizeMB int) error {
 	if err != nil {
 		return err
 	}
+	log.Println(strings.TrimSpace(string(out)))
+
+	out, err = exec.Command(
+		"mkfs.ext4", fmt.Sprintf("/dev/mapper/%s-%s", defaultVolumeGroup, volumeName),
+	).Output()
+	if err != nil {
+		return err
+	}
+	log.Println(strings.TrimSpace(string(out)))
 
 	return nil
 }
