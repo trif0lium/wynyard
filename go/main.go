@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/jaevor/go-nanoid"
+	"github.com/labstack/echo/v4"
 	"github.com/urfave/cli/v2"
 )
 
@@ -86,6 +87,19 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func volumeAPIServer(port int) error {
+	e := echo.New()
+
+	e.GET("/volumes/:volume/snapshots/:snapshot", func(c echo.Context) error {
+	})
+
+	if err := e.Start(fmt.Sprintf(":%d", port)); err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
 }
 
 func volumeMount() error {
