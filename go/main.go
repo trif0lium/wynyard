@@ -98,12 +98,12 @@ func volumeDescribe() error {
 	return nil
 }
 
-func volumeCreate(volumeName string) error {
+func volumeCreate(volumeName string, virtualSizeMB int) error {
 	defaultVolumeGroup := "vg0"
 	defaultThinPoolLV := "lv0"
 
 	if volumeName == "" {
-		volumeID, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789")
+		volumeID, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789", 19)
 		if err != nil {
 			return err
 		}
@@ -115,6 +115,7 @@ func volumeCreate(volumeName string) error {
 		"lvcreate",
 		"--thinpool", fmt.Sprintf("%s/%s", defaultVolumeGroup, defaultThinPoolLV),
 		"--name", volumeName,
+		"--virtualsize", fmt.Sprintf("%dM", virtualSizeMB),
 	).Output()
 
 	return nil
