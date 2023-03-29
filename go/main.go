@@ -158,6 +158,26 @@ func volumeAPIServer(port int) error {
 				return err
 			}
 			log.Println(strings.TrimSpace(string(out)))
+
+			out, err = exec.Command(
+				"umount",
+				"-f",
+				mountPath,
+			).Output()
+			if err != nil {
+				return err
+			}
+			log.Println(strings.TrimSpace(string(out)))
+
+			out, err = exec.Command(
+				"lvremove",
+				"-f",
+				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
+			).Output()
+			if err != nil {
+				return err
+			}
+			log.Println(strings.TrimSpace(string(out)))
 		} else {
 			tarballFilePath = filepath.Join(TARBALL_FILE_PATH, snapshotName+".tar.zst")
 		}
