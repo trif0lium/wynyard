@@ -12,8 +12,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var DEFAULT_VOLUME_GROUP = "vg0"
-var DEFAULT_THIN_POOL_LV = "lv0"
+const (
+	DEFAULT_VOLUME_GROUP = "vg0"
+	DEFAULT_THIN_POOL_LV = "lv0"
+	TARBALL_FILE_PATH    = "/tmp/tarballs"
+	MOUNT_PATH           = "/mnt"
+)
 
 func main() {
 	app := &cli.App{
@@ -90,6 +94,14 @@ func main() {
 }
 
 func volumeAPIServer(port int) error {
+	if err := os.MkdirAll(TARBALL_FILE_PATH, 0777); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(MOUNT_PATH, 0777); err != nil {
+		return err
+	}
+
 	e := echo.New()
 
 	e.GET("/volumes/:volume/snapshots/:snapshot", func(c echo.Context) error {
