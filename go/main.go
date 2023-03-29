@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"os/exec"
 
+	"github.com/jaevor/go-nanoid"
 	"github.com/urfave/cli/v2"
 )
 
@@ -95,7 +98,25 @@ func volumeDescribe() error {
 	return nil
 }
 
-func volumeCreate() error {
+func volumeCreate(volumeName string) error {
+	defaultVolumeGroup := "vg0"
+	defaultThinPoolLV := "lv0"
+
+	if volumeName == "" {
+		volumeID, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789")
+		if err != nil {
+			return err
+		}
+
+		volumeName = "vol_" + volumeID()
+	}
+
+	out, err := exec.Command(
+		"lvcreate",
+		"--thinpool", fmt.Sprintf("%s/%s", defaultVolumeGroup, defaultThinPoolLV),
+		"--name", volumeName,
+	).Output()
+
 	return nil
 }
 
