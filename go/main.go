@@ -11,6 +11,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var DEFAULT_VOLUME_GROUP = "vg0"
+var DEFAULT_THIN_POOL_LV = "lv0"
+
 func main() {
 	app := &cli.App{
 		Name: "wynyard",
@@ -102,9 +105,6 @@ func volumeDescribe() error {
 }
 
 func volumeCreate(volumeName string, virtualSizeMB int) error {
-	defaultVolumeGroup := "vg0"
-	defaultThinPoolLV := "lv0"
-
 	if volumeName == "" {
 		volumeID, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789", 19)
 		if err != nil {
@@ -116,7 +116,7 @@ func volumeCreate(volumeName string, virtualSizeMB int) error {
 
 	out, err := exec.Command(
 		"lvcreate",
-		"--thinpool", fmt.Sprintf("%s/%s", defaultVolumeGroup, defaultThinPoolLV),
+		"--thinpool", fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, DEFAULT_THIN_POOL_LV),
 		"--name", volumeName,
 		"--virtualsize", fmt.Sprintf("%dM", virtualSizeMB),
 	).Output()
@@ -126,7 +126,7 @@ func volumeCreate(volumeName string, virtualSizeMB int) error {
 	log.Println(strings.TrimSpace(string(out)))
 
 	out, err = exec.Command(
-		"mkfs.ext4", fmt.Sprintf("/dev/mapper/%s-%s", defaultVolumeGroup, volumeName),
+		"mkfs.ext4", fmt.Sprintf("/dev/mapper/%s-%s", DEFAULT_VOLUME_GROUP, volumeName),
 	).Output()
 	if err != nil {
 		return err
