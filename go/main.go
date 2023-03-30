@@ -12,6 +12,7 @@ import (
 	"github.com/jaevor/go-nanoid"
 	"github.com/labstack/echo/v4"
 	"github.com/urfave/cli/v2"
+	"golang.org/x/net/context"
 )
 
 const (
@@ -114,7 +115,8 @@ func volumeAPIServer(port int) error {
 
 		if snapshotName == "latest" {
 			snapshotName = volumeName + "_" + fmt.Sprintf("%d", time.Now().Unix())
-			out, err := exec.Command(
+			out, err := exec.CommandContext(
+				c.Request().Context(),
 				"lvcreate",
 				"-s",
 				"-n", snapshotName,
@@ -133,7 +135,8 @@ func volumeAPIServer(port int) error {
 			}
 			defer os.RemoveAll(mountPath)
 
-			out, err = exec.Command(
+			out, err = exec.CommandContext(
+				c.Request().Context(),
 				"mount",
 				"/dev/mapper/"+snapshotName,
 				mountPath,
@@ -147,7 +150,8 @@ func volumeAPIServer(port int) error {
 			if err := os.RemoveAll(tarballFilePath); err != nil {
 				return err
 			}
-			out, err = exec.Command(
+			out, err = exec.CommandContext(
+				c.Request().Context(),
 				"tar",
 				"-I", "'zstd --fast=5'",
 				"-cvf", tarballFilePath,
@@ -159,7 +163,8 @@ func volumeAPIServer(port int) error {
 			}
 			log.Println(strings.TrimSpace(string(out)))
 
-			out, err = exec.Command(
+			out, err = exec.CommandContext(
+				c.Request().Context(),
 				"umount",
 				"-f",
 				mountPath,
@@ -169,7 +174,8 @@ func volumeAPIServer(port int) error {
 			}
 			log.Println(strings.TrimSpace(string(out)))
 
-			out, err = exec.Command(
+			out, err = exec.CommandContext(
+				c.Request().Context(),
 				"lvremove",
 				"-f",
 				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
@@ -212,7 +218,7 @@ func volumeDescribe() error {
 	return nil
 }
 
-func volumeCreate(volumeName string, virtualSizeMB int) error {
+func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int) error {
 	if volumeName == "" {
 		volumeID, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789", 19)
 		if err != nil {
@@ -222,7 +228,8 @@ func volumeCreate(volumeName string, virtualSizeMB int) error {
 		volumeName = "vol_" + volumeID()
 	}
 
-	out, err := exec.Command(
+	out, err := exec.CommandContext(
+		ctx,
 		"lvcreate",
 		"--thinpool", fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, DEFAULT_THIN_POOL_LV),
 		"--name", volumeName,
@@ -233,7 +240,8 @@ func volumeCreate(volumeName string, virtualSizeMB int) error {
 	}
 	log.Println(strings.TrimSpace(string(out)))
 
-	out, err = exec.Command(
+	out, err = exec.CommandContext(
+		ctx,
 		"mkfs.ext4", fmt.Sprintf("/dev/mapper/%s-%s", DEFAULT_VOLUME_GROUP, volumeName),
 	).Output()
 	if err != nil {
