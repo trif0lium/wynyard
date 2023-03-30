@@ -307,13 +307,17 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 
 		mountPath := filepath.Join(MOUNT_PATH, volumeName)
 
-		out, err = exec.CommandContext(
+		cmd := exec.CommandContext(
 			ctx,
 			"mount",
 			"/dev/mapper/"+fmt.Sprintf("%s-%s", DEFAULT_VOLUME_GROUP, volumeName),
 			mountPath,
-		).Output()
+		)
+		out, err := cmd.CombinedOutput()
 		if err != nil {
+			logger.Sugar().Error(strings.Join(cmd.Args, " "))
+			logger.Sugar().Error(string(out))
+			logger.Sugar().Error(err)
 			return err
 		}
 		log.Println(strings.TrimSpace(string(out)))
