@@ -203,10 +203,7 @@ func volumeAPIServer(port int) error {
 		return c.File(tarballFilePath)
 	})
 
-	if err := e.Start(fmt.Sprintf(":%d", port)); err != nil {
-		log.Fatal(err)
-		return err
-	}
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 	return nil
 }
 
