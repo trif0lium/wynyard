@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -79,7 +80,11 @@ func main() {
 						Action: func(cCtx *cli.Context) error {
 							volumeName := cCtx.Args().First()
 							virtualSizeMB := cCtx.Int("size")
-							return volumeCreate(volumeName, virtualSizeMB)
+							remoteSnapshotURL := cCtx.String("remote-snapshot")
+							if _, err := url.Parse(remoteSnapshotURL); err != nil {
+								return err
+							}
+							return volumeCreate(cCtx.Context, volumeName, virtualSizeMB, remoteSnapshotURL)
 						},
 					},
 					{
