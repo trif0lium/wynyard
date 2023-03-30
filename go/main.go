@@ -244,6 +244,14 @@ func volumeDescribe() error {
 }
 
 func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, remoteSnapshotURL string) error {
+	zapConfig := zap.NewProductionConfig()
+	zapConfig.OutputPaths = []string{"stdout"}
+	logger, err := zapConfig.Build()
+	if err != nil {
+		return err
+	}
+	defer logger.Sync()
+
 	if volumeName == "" {
 		volumeID, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789", 19)
 		if err != nil {
@@ -318,8 +326,10 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 			tarballFilePath,
 			"-C",
 			mountPath,
-		).Output()
+		).CombinedOutput()
 		if err != nil {
+			logger.Sugar().Error(string(out))
+			logger.Sugar().Error(err)
 			return err
 		}
 		log.Println(strings.TrimSpace(string(out)))
@@ -329,8 +339,10 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 			"umount",
 			"-f",
 			"/dev/mapper/"+fmt.Sprintf("%s-%s", DEFAULT_VOLUME_GROUP, volumeName),
-		).Output()
+		).CombinedOutput()
 		if err != nil {
+			logger.Sugar().Error(string(out))
+			logger.Sugar().Error(err)
 			return err
 		}
 		log.Println(strings.TrimSpace(string(out)))
