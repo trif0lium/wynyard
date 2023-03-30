@@ -141,6 +141,7 @@ func volumeAPIServer(port int) error {
 				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
 			).CombinedOutput()
 			if err != nil {
+				logger.Sugar().Debug(string(out))
 				logger.Sugar().Error(err)
 				return err
 			}
