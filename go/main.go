@@ -313,6 +313,7 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 		out, err = exec.CommandContext(
 			ctx,
 			"tar",
+			"-I", "zstd",
 			"-xvf",
 			tarballFilePath,
 			"-C",
