@@ -40,7 +40,8 @@ func main() {
 							},
 						},
 						Action: func(cCtx *cli.Context) error {
-							return nil
+							port := cCtx.Int("port")
+							return volumeAPIServer(port)
 						},
 					},
 					{
