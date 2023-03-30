@@ -132,15 +132,17 @@ func volumeAPIServer(port int) error {
 
 		if snapshotName == "latest" {
 			snapshotName = volumeName + "_" + fmt.Sprintf("%d", time.Now().Unix())
-			out, err := exec.CommandContext(
+			cmd := exec.CommandContext(
 				c.Request().Context(),
 				"lvcreate",
 				"-s",
 				"-n", snapshotName,
 				"-l", "'100%ORIGIN'",
 				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
-			).CombinedOutput()
+			)
+			out, err := cmd.CombinedOutput()
 			if err != nil {
+				logger.Sugar().Debugln(strings.Join(cmd.Args, " "))
 				logger.Sugar().Debug(string(out))
 				logger.Sugar().Error(err)
 				return err
