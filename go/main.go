@@ -212,7 +212,7 @@ func volumeAPIServer(port int) error {
 		}
 
 		if _, err := os.Stat(tarballFilePath); err != nil {
-			logger.Error(err)
+			logger.Sugar().Error(err)
 			return err
 		}
 
