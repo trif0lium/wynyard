@@ -176,12 +176,13 @@ func volumeAPIServer(port int) error {
 			out, err = exec.CommandContext(
 				c.Request().Context(),
 				"tar",
-				"-I", "'zstd --fast=5'",
+				"-I", "zstd --fast=5",
 				"-cvf", tarballFilePath,
 				"-C", mountPath,
 				".",
 			).Output()
 			if err != nil {
+				logger.Sugar().Error(string(out))
 				logger.Sugar().Error(err)
 				return err
 			}
