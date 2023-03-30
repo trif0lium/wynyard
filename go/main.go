@@ -273,6 +273,47 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 		if err != nil {
 			return err
 		}
+
+		mountPath := filepath.Join(MOUNT_PATH, volumeName)
+
+		out, err = exec.CommandContext(
+			ctx,
+			"mount",
+			"/dev/mapper/"+volumeName,
+			mountPath,
+		).Output()
+		if err != nil {
+			return err
+		}
+		log.Println(strings.TrimSpace(string(out)))
+
+		out, err = exec.CommandContext(
+			ctx,
+			"tar",
+			"-xvf",
+			tarballFilePath,
+			"-C",
+			mountPath,
+		).Output()
+		if err != nil {
+			return err
+		}
+		log.Println(strings.TrimSpace(string(out)))
+
+		out, err = exec.CommandContext(
+			ctx,
+			"umount",
+			"-f",
+			"/dev/mapper/"+volumeName,
+		).Output()
+		if err != nil {
+			return err
+		}
+		log.Println(strings.TrimSpace(string(out)))
+
+		if err := os.RemoveAll(tarballFilePath); err != nil {
+			return err
+		}
 	}
 
 	return nil
