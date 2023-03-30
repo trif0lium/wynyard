@@ -15,6 +15,7 @@ import (
 	"github.com/jaevor/go-nanoid"
 	"github.com/labstack/echo/v4"
 	"github.com/urfave/cli/v2"
+	"go.uber.org/zap"
 	"golang.org/x/net/context"
 )
 
@@ -105,6 +106,14 @@ func main() {
 }
 
 func volumeAPIServer(port int) error {
+	zapConfig := zap.NewProductionConfig()
+	zapConfig.OutputPaths = []string{"stdout"}
+	logger, err := zapConfig.Build()
+	if err != nil {
+		return err
+	}
+	defer logger.Sync()
+
 	if err := os.MkdirAll(TARBALL_FILE_PATH, 0777); err != nil {
 		return err
 	}
@@ -132,6 +141,7 @@ func volumeAPIServer(port int) error {
 				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
 			).Output()
 			if err != nil {
+				logger.Sugar().Error(err)
 				return err
 			}
 			log.Println(strings.TrimSpace(string(out)))
@@ -139,6 +149,7 @@ func volumeAPIServer(port int) error {
 			mountPath := filepath.Join(MOUNT_PATH, snapshotName)
 
 			if err := os.MkdirAll(mountPath, 0777); err != nil {
+				logger.Sugar().Error(err)
 				return err
 			}
 			defer os.RemoveAll(mountPath)
@@ -150,6 +161,7 @@ func volumeAPIServer(port int) error {
 				mountPath,
 			).Output()
 			if err != nil {
+				logger.Sugar().Error(err)
 				return err
 			}
 			log.Println(strings.TrimSpace(string(out)))
@@ -167,6 +179,7 @@ func volumeAPIServer(port int) error {
 				".",
 			).Output()
 			if err != nil {
+				logger.Sugar().Error(err)
 				return err
 			}
 			log.Println(strings.TrimSpace(string(out)))
@@ -178,6 +191,7 @@ func volumeAPIServer(port int) error {
 				"/dev/mapper/"+fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, snapshotName),
 			).Output()
 			if err != nil {
+				logger.Sugar().Error(err)
 				return err
 			}
 			log.Println(strings.TrimSpace(string(out)))
@@ -189,6 +203,7 @@ func volumeAPIServer(port int) error {
 				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
 			).Output()
 			if err != nil {
+				logger.Sugar().Error(err)
 				return err
 			}
 			log.Println(strings.TrimSpace(string(out)))
@@ -197,6 +212,7 @@ func volumeAPIServer(port int) error {
 		}
 
 		if _, err := os.Stat(tarballFilePath); err != nil {
+			logger.Error(err)
 			return err
 		}
 
