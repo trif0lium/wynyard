@@ -146,7 +146,7 @@ func volumeAPIServer(port int) error {
 			out, err = exec.CommandContext(
 				c.Request().Context(),
 				"mount",
-				"/dev/mapper/"+snapshotName,
+				"/dev/mapper/"+fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, snapshotName),
 				mountPath,
 			).Output()
 			if err != nil {
@@ -175,7 +175,7 @@ func volumeAPIServer(port int) error {
 				c.Request().Context(),
 				"umount",
 				"-f",
-				mountPath,
+				"/dev/mapper/"+fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, snapshotName),
 			).Output()
 			if err != nil {
 				return err
@@ -285,7 +285,7 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 		out, err = exec.CommandContext(
 			ctx,
 			"mount",
-			"/dev/mapper/"+volumeName,
+			"/dev/mapper/"+fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
 			mountPath,
 		).Output()
 		if err != nil {
@@ -310,7 +310,7 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 			ctx,
 			"umount",
 			"-f",
-			"/dev/mapper/"+volumeName,
+			"/dev/mapper/"+fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
 		).Output()
 		if err != nil {
 			return err
