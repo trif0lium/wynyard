@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -218,7 +220,7 @@ func volumeDescribe() error {
 	return nil
 }
 
-func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int) error {
+func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, remoteSnapshotURL string) error {
 	if volumeName == "" {
 		volumeID, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789", 19)
 		if err != nil {
@@ -248,6 +250,30 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int) err
 		return err
 	}
 	log.Println(strings.TrimSpace(string(out)))
+
+	if remoteSnapshotURL != "" {
+		tarballFilePath := filepath.Join(TARBALL_FILE_PATH, volumeName+".tar.zst")
+		if err := os.RemoveAll(tarballFilePath); err != nil {
+			return err
+		}
+
+		tarballFile, err := os.Create(tarballFilePath)
+		if err != nil {
+			return err
+		}
+		defer tarballFile.Close()
+
+		resp, err := http.Get(remoteSnapshotURL)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
+		_, err = io.Copy(tarballFile, resp.Body)
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
