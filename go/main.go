@@ -139,7 +139,7 @@ func volumeAPIServer(port int) error {
 				"-n", snapshotName,
 				"-l", "%ORIGIN",
 				fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
-			).Output()
+			).CombinedOutput()
 			if err != nil {
 				logger.Sugar().Error(err)
 				return err
