@@ -142,8 +142,8 @@ func volumeAPIServer(port int) error {
 			)
 			out, err := cmd.CombinedOutput()
 			if err != nil {
-				logger.Sugar().Debugln(strings.Join(cmd.Args, " "))
-				logger.Sugar().Debug(string(out))
+				logger.Sugar().Errorln(strings.Join(cmd.Args, " "))
+				logger.Sugar().Error(string(out))
 				logger.Sugar().Error(err)
 				return err
 			}
