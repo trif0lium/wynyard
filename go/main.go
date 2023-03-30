@@ -307,6 +307,11 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 
 		mountPath := filepath.Join(MOUNT_PATH, volumeName)
 
+		if err := os.MkdirAll(mountPath, 0777); err != nil {
+			return err
+		}
+		defer os.RemoveAll(mountPath)
+
 		cmd := exec.CommandContext(
 			ctx,
 			"mount",
