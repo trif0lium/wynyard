@@ -7,6 +7,6 @@ server {
   bootstrap_expect = 1
 }
 
-datacenter = "a"
+datacenter = "asia-southeast1-a"
 data_dir = "/opt/nomad"
 name = "wynyard"

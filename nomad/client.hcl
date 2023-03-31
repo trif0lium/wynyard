@@ -2,6 +2,6 @@ client {
   enabled = true
 }
 
-datacenter = "b"
+datacenter = "asia-southeast1-b"
 data_dir = "/opt/nomad"
 name = "wynyard"
