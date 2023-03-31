@@ -1,6 +1,9 @@
 client {
   enabled = true
   network_interface = "lo"
+  server_join {
+    retry_join = ["wynyard-0.asia-southeast1-a.c.PROJECT_ID.internal:4648"]
+  }
 }
 
 datacenter = "asia-southeast1-b"
