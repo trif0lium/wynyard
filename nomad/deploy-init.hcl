@@ -21,6 +21,7 @@ job "hello" {
       driver = "docker"
       config {
         image = "ubuntu:latest"
+        command = "/bin/bash"
         mount {
           type = "volume"
           target = "/mnt/external"
