@@ -1,10 +1,5 @@
 client {
   enabled = true
-  plugin "raw_exec" {
-    config {
-      enabled = true
-    }
-  }
 }
 
 server {
@@ -15,3 +10,9 @@ server {
 datacenter = "asia-southeast1-a"
 data_dir = "/opt/nomad"
 name = "wynyard"
+
+plugin "raw_exec" {
+  config {
+    enabled = true
+  }
+}
