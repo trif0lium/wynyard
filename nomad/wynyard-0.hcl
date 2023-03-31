@@ -10,7 +10,7 @@ server {
 
 datacenter = "asia-southeast1-a"
 data_dir = "/opt/nomad"
-name = "wynyard"
+name = "wynyard-0"
 
 plugin "raw_exec" {
   config {
