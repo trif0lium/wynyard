@@ -284,6 +284,7 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 		"--virtualsize", fmt.Sprintf("%dM", virtualSizeMB),
 	).Output()
 	if err != nil {
+		logger.Sugar().Error(err)
 		return err
 	}
 	log.Println(strings.TrimSpace(string(out)))
@@ -293,6 +294,7 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 		"mkfs.ext4", fmt.Sprintf("/dev/mapper/%s-%s", DEFAULT_VOLUME_GROUP, volumeName),
 	).Output()
 	if err != nil {
+		logger.Sugar().Error(err)
 		return err
 	}
 	log.Println(strings.TrimSpace(string(out)))
