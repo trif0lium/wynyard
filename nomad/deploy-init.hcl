@@ -21,6 +21,20 @@ job "hello" {
       driver = "docker"
       config {
         image = "ubuntu:latest"
+        mount {
+          type = "volume"
+          target = "/mnt/external"
+          readonly = false
+          volume_options {
+            driver_config {
+              name = "local"
+              options {
+                device = "/dev/mapper/vg0-vol_xyz"
+                type = "ext4"
+              }
+            }
+          }
+        }
       }
     }
   }
