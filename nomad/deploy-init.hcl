@@ -24,7 +24,6 @@ job "hello" {
         mount {
           type = "volume"
           target = "/mnt/external"
-          readonly = false
           volume_options {
             driver_config {
               name = "local"
