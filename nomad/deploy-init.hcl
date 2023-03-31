@@ -10,7 +10,7 @@ job "hello" {
         hook = "prestart"
         sidecar = false
       }
-      driver = "exec"
+      driver = "raw_exec"
       config {
         command = "/bin/bash"
         args = ["-c", "cd /root/wynyard/go && go run main.go volume create -size 3000 vol_xyz"]
