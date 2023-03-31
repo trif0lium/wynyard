@@ -1,8 +1,8 @@
 job "hello" {
-  datacenters = ["asia-southeast-1"]
+  datacenters = ["asia-southeast1-a"]
   type = "service"
 
-  group "xyz" {
+  group "hello" {
     count = 1
 
     task "ubuntu" {
