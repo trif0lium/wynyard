@@ -12,7 +12,7 @@ job "hello" {
       }
       driver = "raw_exec"
       config {
-        command = "/root/wynyard/go/buid/wynyard"
+        command = "/root/wynyard/go/build/wynyard"
         args = ["volume", "create", "-size", "3000", "vol_xyz"]
       }
     }
