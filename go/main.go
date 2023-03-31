@@ -276,14 +276,17 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 		volumeName = "vol_" + volumeID()
 	}
 
-	out, err := exec.CommandContext(
+	cmd := exec.CommandContext(
 		ctx,
 		"lvcreate",
 		"--thinpool", fmt.Sprintf("%s/%s", DEFAULT_VOLUME_GROUP, DEFAULT_THIN_POOL_LV),
 		"--name", volumeName,
 		"--virtualsize", fmt.Sprintf("%dM", virtualSizeMB),
-	).Output()
+	)
+	out, err := cmd.CombinedOutput()
 	if err != nil {
+		logger.Sugar().Errorln(strings.Join(cmd.Args, " "))
+		logger.Sugar().Error(string(out))
 		logger.Sugar().Error(err)
 		return err
 	}
