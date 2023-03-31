@@ -12,8 +12,8 @@ job "hello" {
       }
       driver = "raw_exec"
       config {
-        command = "/bin/bash"
-        args = ["-c", "cd /root/wynyard/go && /usr/local/go/bin/go run main.go volume create -size 3000 vol_xyz"]
+        command = "/root/wynyard/go/buid/wynyard"
+        args = ["volume", "create", "-size", "3000", "vol_xyz"]
       }
     }
 
