@@ -94,8 +94,10 @@ func main() {
 							volumeName := cCtx.Args().First()
 							virtualSizeMB := cCtx.Int("size")
 							remoteSnapshotURL := cCtx.String("remote-snapshot")
-							if _, err := url.Parse(remoteSnapshotURL); err != nil {
-								return err
+							if remoteSnapshotURL != "" {
+								if _, err := url.Parse(remoteSnapshotURL); err != nil {
+									return err
+								}
 							}
 							return volumeCreate(cCtx.Context, volumeName, virtualSizeMB, remoteSnapshotURL)
 						},
