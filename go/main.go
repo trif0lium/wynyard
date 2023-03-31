@@ -103,6 +103,8 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+
+	os.Exit(0)
 }
 
 func volumeAPIServer(port int) error {
