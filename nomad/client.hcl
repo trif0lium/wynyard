@@ -1,5 +1,6 @@
 client {
   enabled = true
+  network_interface = "lo"
 }
 
 datacenter = "asia-southeast1-b"
