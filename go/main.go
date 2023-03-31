@@ -267,6 +267,9 @@ func volumeCreate(ctx context.Context, volumeName string, virtualSizeMB int, rem
 	}
 	defer logger.Sync()
 
+	hostname, _ := os.Hostname()
+	logger = logger.With(zap.String("hostname", hostname))
+
 	if volumeName == "" {
 		volumeID, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789", 19)
 		if err != nil {
