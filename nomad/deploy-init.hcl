@@ -12,7 +12,7 @@ job "hello" {
       }
       driver = "exec"
       config {
-        command = "go"
+        command = "/usr/local/go/bin/go"
         args = ["run", "/root/wynyard/go/main.go", "volume", "create", "-size", "3000", "vol_xyz"]
       }
     }
