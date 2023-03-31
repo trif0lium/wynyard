@@ -12,3 +12,11 @@ plugin "raw_exec" {
     no_cgroups = true
   }
 }
+
+plugin "docker" {
+  config {
+    volumes {
+      enabled = true
+    }
+  }
+}
