@@ -31,6 +31,17 @@ func main() {
 		Name: "wynyard",
 		Commands: []*cli.Command{
 			{
+				Name: "debug",
+				Action: func(cCtx *cli.Context) error {
+					hostname, err := os.Hostname()
+					if err != nil {
+						return err
+					}
+					fmt.Println(hostname)
+					return nil
+				},
+			},
+			{
 				Name: "volume",
 				Subcommands: []*cli.Command{
 					{
