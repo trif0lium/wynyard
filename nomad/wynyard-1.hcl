@@ -2,7 +2,7 @@ client {
   enabled = true
   network_interface = "lo"
   server_join {
-    retry_join = ["wynyard-0.asia-southeast1-a.c.PROJECT_ID.internal:4648"]
+    retry_join = ["wynyard-0.asia-southeast1-a.c.railway-infra-dev.internal:4648"]
   }
 }
 
