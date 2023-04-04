@@ -99,7 +99,7 @@ func main() {
 							snapshotLocation := cCtx.String("snapshot-location")
 							remoteSnapshotURL := ""
 							if snapshotHost != "" && snapshotLocation != "" {
-								remoteSnapshotURL = fmt.Sprintf("http://%s.%s.c.railway-infra-dev:1323/volumes/%s/snapshots/latest", snapshotHost, snapshotLocation, volumeName)
+								remoteSnapshotURL = fmt.Sprintf("http://%s.%s.c.railway-infra-dev.internal:1323/volumes/%s/snapshots/latest", snapshotHost, snapshotLocation, volumeName)
 							}
 							return volumeCreate(cCtx.Context, volumeName, virtualSizeMB, remoteSnapshotURL)
 						},
