@@ -1,5 +1,8 @@
 .PHONY: *
 
+vm:
+	curl -fsSL get.docker.com | bash
+
 wynyard-0:
 	cp wynyard-0.nomad.service /etc/systemd/system/nomad.service
 	systemctl enable nomad
