@@ -1,5 +1,5 @@
 job "hello" {
-  datacenters = ["asia-southeast1-b"]
+  datacenters = ["asia-southeast1-a"]
   type = "service"
 
   group "hello" {
@@ -13,7 +13,7 @@ job "hello" {
       driver = "raw_exec"
       config {
         command = "/root/wynyard/go/build/wynyard"
-        args = ["volume", "create", "-size", "3000", "-snapshot-host", "wynyard-0", "-snapshot-location", "asia-southeast1-a", "vol_xyz"]
+        args = ["volume", "create", "-size", "3000", "-snapshot-host", "wynyard-1", "-snapshot-location", "asia-southeast1-b", "vol_xyz"]
       }
     }
 
