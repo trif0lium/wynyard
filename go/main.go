@@ -84,7 +84,10 @@ func main() {
 						Name: "create",
 						Flags: []cli.Flag{
 							&cli.StringFlag{
-								Name: "remote-snapshot",
+								Name: "snapshot-host",
+							},
+							&cli.StringFlag{
+								Name: "snapshot-location",
 							},
 							&cli.IntFlag{
 								Name: "size",
@@ -93,11 +96,11 @@ func main() {
 						Action: func(cCtx *cli.Context) error {
 							volumeName := cCtx.Args().First()
 							virtualSizeMB := cCtx.Int("size")
-							remoteSnapshotURL := cCtx.String("remote-snapshot")
-							if remoteSnapshotURL != "" {
-								if _, err := url.Parse(remoteSnapshotURL); err != nil {
-									return err
-								}
+							snapshotHost := cCtx.String("snapshot-host")
+							snapshotLocation := cCtx.String("snapshot-location")
+							remoteSnapshotURL := ""
+							if snapshotHost != "" && snapshotLocation != "" {
+								remoteSnapshotURL = fmt.Sprintf("http://%s.%s.c.railway-infra-dev:1323/volumes/%s/snapshots/latest", snapshotHost, snapshotLocation, volumeName)
 							}
 							return volumeCreate(cCtx.Context, volumeName, virtualSizeMB, remoteSnapshotURL)
 						},
