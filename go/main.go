@@ -144,19 +144,21 @@ func volumeAPIServer(port int) error {
 	e.GET("/volumes/:volume/stream", func(c echo.Context) error {
 		volumeName := strings.ToLower(c.Param("volume"))
 
+		r, w := io.Pipe()
+		defer r.Close()
+		defer w.Close()
+
+		r2, w2 := io.Pipe()
+		defer r2.Close()
+		defer w2.Close()
+
 		cmd := exec.CommandContext(
 			c.Request().Context(),
 			"dd",
 			fmt.Sprintf("if=/dev/%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
 			"bs=8M",
 		)
-
-		stdout, err := cmd.StdoutPipe()
-		defer stdout.Close()
-		if err != nil {
-			logger.Sugar().Error(err)
-			return err
-		}
+		cmd.Stdout = w
 
 		zstdCmd := exec.CommandContext(
 			c.Request().Context(),
@@ -164,14 +166,8 @@ func volumeAPIServer(port int) error {
 			"-5",
 			"-",
 		)
-
-		zstdCmd.Stdin = stdout
-		zstdStdout, err := zstdCmd.StdoutPipe()
-		defer zstdStdout.Close()
-		if err != nil {
-			logger.Sugar().Error(err)
-			return err
-		}
+		zstdCmd.Stdin = r
+		zstdCmd.Stdout = w2
 
 		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEOctetStream)
 		c.Response().WriteHeader(http.StatusOK)
@@ -198,7 +194,7 @@ func volumeAPIServer(port int) error {
 			}
 		}()
 
-		_, err = io.Copy(c.Response(), zstdStdout)
+		_, err = io.Copy(c.Response(), r2)
 		if err != nil {
 			logger.Sugar().Error(err)
 			return err
