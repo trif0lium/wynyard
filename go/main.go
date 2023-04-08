@@ -152,6 +152,22 @@ func volumeAPIServer(port int) error {
 		)
 
 		stdout, err := cmd.StdoutPipe()
+		defer stdout.Close()
+		if err != nil {
+			logger.Sugar().Error(err)
+			return err
+		}
+
+		zstdCmd := exec.CommandContext(
+			c.Request().Context(),
+			"zstd",
+			"-5",
+			"-",
+		)
+
+		zstdCmd.Stdin = stdout
+		zstdStdout, err := zstdCmd.StdoutPipe()
+		defer zstdStdout.Close()
 		if err != nil {
 			logger.Sugar().Error(err)
 			return err
@@ -161,13 +177,23 @@ func volumeAPIServer(port int) error {
 		c.Response().WriteHeader(http.StatusOK)
 
 		go func() {
+			if err := zstdCmd.Start(); err != nil {
+				logger.Sugar().Error(err)
+				return
+			}
+
 			if err := cmd.Run(); err != nil {
+				logger.Sugar().Error(err)
+				return
+			}
+
+			if err := zstdCmd.Wait(); err != nil {
 				logger.Sugar().Error(err)
 				return
 			}
 		}()
 
-		_, err = io.Copy(c.Response(), stdout)
+		_, err = io.Copy(c.Response(), zstdStdout)
 		if err != nil {
 			logger.Sugar().Error(err)
 			return err
