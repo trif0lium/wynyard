@@ -142,7 +142,26 @@ func volumeAPIServer(port int) error {
 	e := echo.New()
 
 	e.GET("/volumes/:volume/stream", func(c echo.Context) error {
-		return c.Stream(http.StatusOK, "application/x-zstd-compressed-tar", nil)
+		volumeName := strings.ToLower(c.Param("volume"))
+
+		cmd := exec.CommandContext(
+			c.Request().Context(),
+			"dd",
+			fmt.Sprintf("if=/dev/%s/%s", DEFAULT_VOLUME_GROUP, volumeName),
+			"bs=8M",
+		)
+
+		stdout, err := cmd.StdoutPipe()
+		if err != nil {
+			return err
+		}
+
+		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEOctetStream)
+		c.Response().WriteHeader(http.StatusOK)
+
+		io.Copy(c.Response(), stdout)
+
+		return nil
 	})
 
 	e.GET("/volumes/:volume/snapshots/:snapshot", func(c echo.Context) error {
