@@ -182,7 +182,12 @@ func volumeAPIServer(port int) error {
 				return
 			}
 
-			if err := cmd.Run(); err != nil {
+			if err := cmd.Start(); err != nil {
+				logger.Sugar().Error(err)
+				return
+			}
+
+			if err := cmd.Wait(); err != nil {
 				logger.Sugar().Error(err)
 				return
 			}
