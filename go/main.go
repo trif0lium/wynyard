@@ -146,11 +146,9 @@ func volumeAPIServer(port int) error {
 
 		r, w := io.Pipe()
 		defer r.Close()
-		defer w.Close()
 
 		r2, w2 := io.Pipe()
 		defer r2.Close()
-		defer w2.Close()
 
 		cmd := exec.CommandContext(
 			c.Request().Context(),
@@ -188,10 +186,14 @@ func volumeAPIServer(port int) error {
 				return
 			}
 
+			w.Close()
+
 			if err := zstdCmd.Wait(); err != nil {
 				logger.Sugar().Error(err)
 				return
 			}
+
+			w2.Close()
 		}()
 
 		_, err = io.Copy(c.Response(), r2)
