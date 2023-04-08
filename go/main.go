@@ -153,13 +153,25 @@ func volumeAPIServer(port int) error {
 
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
+			logger.Sugar().Error(err)
 			return err
 		}
 
 		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEOctetStream)
 		c.Response().WriteHeader(http.StatusOK)
 
-		io.Copy(c.Response(), stdout)
+		go func() {
+			if err := cmd.Run(); err != nil {
+				logger.Sugar().Error(err)
+				return
+			}
+		}()
+
+		_, err = io.Copy(c.Response(), stdout)
+		if err != nil {
+			logger.Sugar().Error(err)
+			return err
+		}
 
 		return nil
 	})
