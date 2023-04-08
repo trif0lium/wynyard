@@ -141,6 +141,10 @@ func volumeAPIServer(port int) error {
 
 	e := echo.New()
 
+	e.GET("/volumes/:volume/stream", func(c echo.Context) error {
+		return c.Stream(http.StatusOK, "application/x-zstd-compressed-tar", nil)
+	})
+
 	e.GET("/volumes/:volume/snapshots/:snapshot", func(c echo.Context) error {
 		volumeName := strings.ToLower(c.Param("volume"))
 		snapshotName := strings.ToLower(c.Param("snapshot"))
